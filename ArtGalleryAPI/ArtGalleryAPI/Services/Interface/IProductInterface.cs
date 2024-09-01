@@ -1,6 +1,5 @@
 ﻿using ArtGalleryAPI.Models.Domain;
 using ArtGalleryAPI.Models.Dto;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ArtGalleryAPI.Services.Interface
 {
@@ -11,7 +10,7 @@ namespace ArtGalleryAPI.Services.Interface
         Task<IEnumerable<Product>> GetProductsFromIdArrayAsync(IEnumerable<Guid> productIds);
         Task<IEnumerable<Product>>? GetProductsByCategoryIdAsync(Guid categoryId);
         Task<Product> CreateProductAsync(Product newProduct);
-        Task<Product>? UpdateProductAsync(Guid productId, UpdateProductDto updatedProduct);
+        Task<Product>? UpdateProductAsync(Guid productId, Product updatedProduct);
         Task<bool> DeleteProductAsync(Guid productId);
         Task<bool> DeleteProductsAsync(Guid[] productIds);
     }

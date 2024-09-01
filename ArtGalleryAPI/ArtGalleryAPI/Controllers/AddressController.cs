@@ -3,6 +3,7 @@ using ArtGalleryAPI.Models.Domain;
 using ArtGalleryAPI.Models.Dto;
 using ArtGalleryAPI.Services.Implementation;
 using ArtGalleryAPI.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -20,7 +21,9 @@ namespace ArtGalleryAPI.Controllers
             this.addressService = addressService;
             this.appUserService = appUserService;
         }
+
         [HttpGet]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> GetAllAddresses()
         {
             try
@@ -35,6 +38,7 @@ namespace ArtGalleryAPI.Controllers
         }
         [HttpGet]
         [Route("{addressId:Guid}")]
+        [Authorize]
         public async Task<IActionResult> GetAddressById([FromRoute] Guid addressId)
         {
             try
@@ -55,6 +59,7 @@ namespace ArtGalleryAPI.Controllers
             }
         }
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddAddress([FromBody] AddAddressDto address)
         {
             if (!ModelState.IsValid)
@@ -94,6 +99,7 @@ namespace ArtGalleryAPI.Controllers
         }
         [HttpPut]
         [Route("{addressId:Guid}")]
+        [Authorize]
         public async Task<IActionResult> UpdateAddress([FromRoute] Guid addressId, [FromBody] UpdateAddressDto updatedAddress)
         {
             try
@@ -116,6 +122,7 @@ namespace ArtGalleryAPI.Controllers
         }
         [HttpDelete]
         [Route("{addressId:Guid}")]
+        [Authorize]
         public async Task<IActionResult> DeleteAddress([FromRoute] Guid addressId)
         {
             try
@@ -130,6 +137,7 @@ namespace ArtGalleryAPI.Controllers
         }
         [HttpGet]
         [Route("AppUser/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetAddressesByUserId([FromRoute] string userId)
         {
             try

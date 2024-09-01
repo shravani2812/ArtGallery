@@ -3,6 +3,7 @@ using ArtGalleryAPI.Data;
 using ArtGalleryAPI.Models.Domain;
 using ArtGalleryAPI.Models.Dto;
 using ArtGalleryAPI.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +47,12 @@ namespace ArtGalleryAPI.Controllers
                             Price = product.Price,
                             Status = product.Status,
                             CreatedAt = product.CreatedAt,
-                            Category = product.Category
+                            Category = new CategoryReturnDto()
+                            {
+                                CategoryId = product.Category.CategoryId,
+                                Name = product.Category.Name,
+                                Description = product.Category.Description,
+                            }
                         }
                         );
                 }
@@ -85,7 +91,12 @@ namespace ArtGalleryAPI.Controllers
                         Price = product.Price,
                         Status = product.Status,
                         CreatedAt = product.CreatedAt,
-                        Category = product.Category
+                        Category = new CategoryReturnDto()
+                        {
+                            CategoryId = product.Category.CategoryId,
+                            Name = product.Category.Name,
+                            Description = product.Category.Description,
+                        }
                     };
                     return Ok(response);
                 }
@@ -169,7 +180,12 @@ namespace ArtGalleryAPI.Controllers
                                 Price = product.Price,
                                 Status = product.Status,
                                 CreatedAt = product.CreatedAt,
-                                Category = product.Category
+                                Category = new CategoryReturnDto()
+                                {
+                                    CategoryId = product.Category.CategoryId,
+                                    Name = product.Category.Name,
+                                    Description = product.Category.Description,
+                                }
                             }
                             );
                     }
@@ -188,6 +204,7 @@ namespace ArtGalleryAPI.Controllers
         /// <param name="product"></param>
         /// <returns>new product</returns>
         [HttpPost]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> AddProduct([FromBody] AddProductDto product)
         {
             if (!ModelState.IsValid)
@@ -214,9 +231,29 @@ namespace ArtGalleryAPI.Controllers
                 {
                     newProduct.Category = existingCategory;
                 }
+                else
+                {
+                    return BadRequest("Invalid Category Id!");
+                }
 
                 newProduct = await productService.CreateProductAsync(newProduct);
-                return Ok(newProduct);
+                var res = new ProductDto()
+                {
+                    ProductId = newProduct.ProductId,
+                    Name = newProduct.Name,
+                    Description = newProduct.Description,
+                    ImageUrl = newProduct.ImageUrl,
+                    Price = newProduct.Price,
+                    Status = newProduct.Status,
+                    CreatedAt = newProduct.CreatedAt,
+                    Category = new CategoryReturnDto()
+                    {
+                        CategoryId = newProduct.Category.CategoryId,
+                        Name = newProduct.Category.Name,
+                        Description = newProduct.Category.Description,
+                    }
+                };
+                return Ok(res);
             }
             catch (Exception ex)
             {
@@ -231,18 +268,18 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>updated product</returns>
         [HttpPut]
         [Route("{productId:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> UpdateProduct([FromRoute] Guid productId, [FromBody] UpdateProductDto product)
         {
             try
             {
-                var newProduct = new UpdateProductDto()
+                var newProduct = new Product()
                 {
                     Name = product.Name,
                     Description = product.Description,
                     ImageUrl = product.ImageUrl,
                     Price = product.Price,
                     Status = product.Status,
-                    ModifiedAt = DateTime.UtcNow,
                     CategoryId = product.CategoryId,
                     Category = null,
                 };
@@ -270,7 +307,12 @@ namespace ArtGalleryAPI.Controllers
                         Price = res.Price,
                         Status = res.Status,
                         CreatedAt = res.CreatedAt,
-                        Category = res.Category,
+                        Category = new CategoryReturnDto()
+                        {
+                            CategoryId = product.Category.CategoryId,
+                            Name = product.Category.Name,
+                            Description = product.Category.Description,
+                        }
                     };
                     return Ok(result);
                 }
@@ -289,6 +331,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>bool representing state of operation</returns>
         [HttpDelete]
         [Route("{productId:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteProduct([FromRoute] Guid productId)
         {
             try
@@ -313,6 +356,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>bool representing state of operation</returns>
         [HttpPost]
         [Route("deleteproducts")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteProducts([FromBody] Guid[] productIds)
         {
             try

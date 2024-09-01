@@ -1,5 +1,4 @@
-﻿using ArtGalleryAPI.Models.Domain;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace ArtGalleryAPI.Models.Dto
@@ -7,6 +6,7 @@ namespace ArtGalleryAPI.Models.Dto
     public class ProductDto
     {
         [Key]
+        [Required]
         public Guid ProductId { get; set; }
 
         [Required]
@@ -32,11 +32,6 @@ namespace ArtGalleryAPI.Models.Dto
         [Required]
         public required DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public DateTime? ModifiedAt { get; set; }
-
-        [MaxLength(100, ErrorMessage = "Product modified by can have a maximum of 100 characters!")]
-        public string? ModifiedBy { get; set; }
-
-        public Category Category { get; set; }
+        public CategoryReturnDto Category { get; set; }
     }
 }

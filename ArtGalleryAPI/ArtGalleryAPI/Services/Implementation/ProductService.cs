@@ -64,7 +64,7 @@ namespace ArtGalleryAPI.Services.Implementation
             return newProduct;
         }
 
-        public async Task<Product>? UpdateProductAsync(Guid productId, UpdateProductDto updatedProduct)
+        public async Task<Product>? UpdateProductAsync(Guid productId, Product updatedProduct)
         {
             var product = await dbContext.Product.Include(c => c.Category).SingleOrDefaultAsync(product => product.ProductId == productId);
             if (product == null)

@@ -22,12 +22,23 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>list of all categories</returns>
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllCategories()
         {
             try
             {
                 var categories = await categoryService.GetAllCategoriesAsync();
-                return Ok(categories);
+                List<CategoryReturnDto> result = new List<CategoryReturnDto>();
+                foreach (var category in categories)
+                {
+                    result.Add(new CategoryReturnDto()
+                    {
+                        CategoryId = category.CategoryId,
+                        Name = category.Name,
+                        Description = category.Description,
+                    });
+                }
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -42,6 +53,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>filtered category</returns>
         [HttpGet]
         [Route("{categoryId:Guid}")]
+        [Authorize]
         public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId)
         {
             try
@@ -53,7 +65,13 @@ namespace ArtGalleryAPI.Controllers
                 }
                 else
                 {
-                    return Ok(category);
+                    var result = new CategoryReturnDto()
+                    {
+                        CategoryId = category.CategoryId,
+                        Name = category.Name,
+                        Description = category.Description,
+                    };
+                    return Ok(result);
                 }
             }
             catch (Exception ex)
@@ -69,6 +87,7 @@ namespace ArtGalleryAPI.Controllers
         /// <param name="category"></param>
         /// <returns>new category</returns>
         [HttpPost]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> AddCategory([FromBody] AddCategoryDto category)
         {
             if (!ModelState.IsValid)
@@ -84,9 +103,19 @@ namespace ArtGalleryAPI.Controllers
                     Description = category.Description,
                     CreatedAt = DateTime.UtcNow,
                 };
-                await categoryService.CreateCategoryAsync(newCategory);
+                var returnCategory = await categoryService.CreateCategoryAsync(newCategory);
+                if (returnCategory == null)
+                {
+                    return BadRequest("Duplicate category!");
+                }
+                var result = new CategoryReturnDto()
+                {
+                    CategoryId = newCategory.CategoryId,
+                    Name = newCategory.Name,
+                    Description = newCategory.Description,
+                };
                 var locationUri = Url.Action("GetCategoryById", new { categoryId = newCategory.CategoryId });
-                return Created(locationUri, newCategory);
+                return Created(locationUri, result);
             }
             catch (Exception ex)
             {
@@ -101,17 +130,24 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>updated category</returns>
         [HttpPut]
         [Route("{categoryId:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> UpdateCategory([FromRoute] Guid categoryId, [FromBody] UpdateCategoryDto updatedCategory)
         {
             try
             {
-                var result = await categoryService.UpdateCategoryAsync(categoryId, updatedCategory);
-                if (result == null)
+                var category = await categoryService.UpdateCategoryAsync(categoryId, updatedCategory);
+                if (category == null)
                 {
                     return NotFound();
                 }
                 else
                 {
+                    var result = new CategoryReturnDto()
+                    {
+                        CategoryId = category.CategoryId,
+                        Name = category.Name,
+                        Description = category.Description,
+                    };
                     return Ok(result);
                 }
 
@@ -128,8 +164,8 @@ namespace ArtGalleryAPI.Controllers
         /// <param name="categoryId"></param>
         /// <returns>bool representing state of operation</returns>
         [HttpDelete]
-        [Authorize(Roles = "Writer")]
         [Route("{categoryId:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid categoryId)
         {
             try

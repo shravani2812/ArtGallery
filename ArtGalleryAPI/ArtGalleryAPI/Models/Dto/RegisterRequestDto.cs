@@ -6,7 +6,8 @@ namespace ArtGalleryAPI.Models.Dto
     {
         [Required]
         [EmailAddress]
-        [RegularExpression(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$", ErrorMessage = "Please enter a valid email")]
+        //[RegularExpression(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$", ErrorMessage = "Please enter a valid email")]
+        [RegularExpression("^[a-zA-Z0-9_\\.-]+@([a-zA-z0-9-]+\\.)+[a-zA-Z]{2,6}$", ErrorMessage = "Invalid Email!")]
         [MaxLength(100, ErrorMessage = "User email can have a maximum of 100 characters!")]
         public required string Email { get; set; }
         [Required]
@@ -26,7 +27,5 @@ namespace ArtGalleryAPI.Models.Dto
         [RegularExpression(@"^\+?[1-9]\d{1,14}$", ErrorMessage = "Please enter a valid phone number")]
         [MaxLength(15, ErrorMessage = "User phone number can have a maximum of 15 characters")]
         public string? PhoneNumber { get; set; }
-
-        public bool isAdmin { get; set; }
     }
 }

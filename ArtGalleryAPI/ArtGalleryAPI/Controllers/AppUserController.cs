@@ -23,6 +23,7 @@ namespace ArtGalleryAPI.Controllers
         /// </summary>
         /// <returns>list of all users</returns>
         [HttpGet]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> GetAllUsers()
         {
             try
@@ -43,6 +44,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>filtered user</returns>
         [HttpGet]
         [Route("{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetUserById([FromRoute] string userId)
         {
             try
@@ -70,6 +72,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>filtered user</returns>
         [HttpGet]
         [Route("admin/getUserByEmail/{email}")]
+        [Authorize]
         public async Task<IActionResult> GetUserByEmail([FromRoute] string email)
         {
             try
@@ -97,6 +100,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>updated user</returns>
         [HttpPut]
         [Route("{userId}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> UpdateCategory([FromRoute] string userId, [FromBody] UpdateAppUserDto updatedAppUser)
         {
             try
@@ -125,6 +129,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>bool representing state of operation</returns>
         [HttpDelete]
         [Route("{userId}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteCategory([FromRoute] string userId)
         {
             try

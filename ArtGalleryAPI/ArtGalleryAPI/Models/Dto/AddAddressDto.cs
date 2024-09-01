@@ -35,6 +35,7 @@ namespace ArtGalleryAPI.Models.Dto
         public required string PhoneNumber { get; set; }
 
         [Required]
+        [RegularExpression("^[a-zA-Z0-9_\\.-]+@([a-zA-z0-9-]+\\.)+[a-zA-Z]{2,6}$", ErrorMessage = "Invalid Email!")]
         public required string userEmail { get; set; }
 
     }

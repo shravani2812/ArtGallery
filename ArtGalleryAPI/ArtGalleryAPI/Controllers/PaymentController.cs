@@ -2,6 +2,7 @@
 using ArtGalleryAPI.Models.Dto;
 using ArtGalleryAPI.Services.Implementation;
 using ArtGalleryAPI.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,7 @@ namespace ArtGalleryAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreatePayment(AddPaymentDto payment)
         {
             if (!ModelState.IsValid)

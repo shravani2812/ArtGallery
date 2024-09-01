@@ -2,6 +2,7 @@
 using ArtGalleryAPI.Models.Dto;
 using ArtGalleryAPI.Services.Implementation;
 using ArtGalleryAPI.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>list of all orders</returns>
 
         [HttpGet]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> GetAllOrders()
         {
             try
@@ -44,6 +46,7 @@ namespace ArtGalleryAPI.Controllers
 
         [HttpGet]
         [Route("orderItems/{orderId:Guid}")]
+        [Authorize]
         public async Task<IActionResult> GetAllOrdersItemsByOrderId([FromRoute] Guid orderId)
         {
             try
@@ -64,6 +67,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>filtered order</returns>
         [HttpGet]
         [Route("{orderId:Guid}")]
+        [Authorize]
         public async Task<IActionResult> GetOrderById([FromRoute] Guid orderId)
         {
             try
@@ -92,6 +96,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>filtered orders</returns>
         [HttpGet]
         [Route("user/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetOrdersByUserId([FromRoute] string userId)
         {
             try
@@ -118,6 +123,7 @@ namespace ArtGalleryAPI.Controllers
         /// <param name="order"></param>
         /// <returns>new order</returns>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Addorder([FromBody] AddAppOrderDto order)
         {
             if (!ModelState.IsValid)
@@ -151,6 +157,7 @@ namespace ArtGalleryAPI.Controllers
         /// <returns>bool representing state of operation</returns>
         [HttpDelete]
         [Route("{orderId:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Deleteorder([FromRoute] Guid orderId)
         {
             try

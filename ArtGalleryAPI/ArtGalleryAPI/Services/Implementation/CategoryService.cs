@@ -1,5 +1,4 @@
-﻿using ArtGalleryAPI.CustomExceptions;
-using ArtGalleryAPI.Data;
+﻿using ArtGalleryAPI.Data;
 using ArtGalleryAPI.Models.Domain;
 using ArtGalleryAPI.Models.Dto;
 using ArtGalleryAPI.Services.Interface;
@@ -29,9 +28,18 @@ namespace ArtGalleryAPI.Services.Implementation
 
         public async Task<Category> CreateCategoryAsync(Category newCategory)
         {
-            await dbContext.Category.AddAsync(newCategory);
-            await dbContext.SaveChangesAsync();
-            return newCategory;
+            var category = await dbContext.Category.SingleOrDefaultAsync(c => c.Name == newCategory.Name);
+            if(category == null)
+            {
+                await dbContext.Category.AddAsync(newCategory);
+                await dbContext.SaveChangesAsync();
+                return newCategory;
+            }
+            else
+            {
+                return null;
+            }
+            
         }
 
         public async Task<Category>? UpdateCategoryAsync(Guid categoryId, UpdateCategoryDto updatedCategory)

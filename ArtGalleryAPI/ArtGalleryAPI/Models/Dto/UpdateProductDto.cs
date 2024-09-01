@@ -26,11 +26,9 @@ namespace ArtGalleryAPI.Models.Dto
         [MaxLength(30, ErrorMessage = "Product status can have a maximum of 30 characters!")]
         public required string Status { get; set; }
 
-        public DateTime? ModifiedAt { get; set; }
-
         [Required]
         public required Guid CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        public CategoryReturnDto Category { get; set; }
     }
 }
